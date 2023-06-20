@@ -19,28 +19,29 @@ public class Ticket {
     private UUID ticket_number;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "event_code")
+    @JoinColumn(name = "user_code")
     private User user;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "tier_code")
+    private Tier tier;
 
     @Column(name = "purchase_date")
     private Timestamp purchaseDate;
 
-    @Column(name = "is_valid")
+    @Column(name = "valid")
     private Boolean isValid;
-
-    @Column(name = "priority")
-    private String priority;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "qr_code")
     private QR qr;
 
-    public Ticket(User user, Timestamp purchaseDate, Boolean isValid, String priority, QR qr) {
+    public Ticket(User user, Tier tier, Timestamp purchaseDate, Boolean isValid, String priority, QR qr) {
         super();
         this.user = user;
+        this.tier = tier;
         this.purchaseDate = purchaseDate;
         this.isValid = isValid;
-        this.priority = priority;
         this.qr = qr;
     }
 }

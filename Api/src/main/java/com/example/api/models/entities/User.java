@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -18,6 +19,10 @@ import java.util.List;
 @Table(name = "user")
 public class User implements UserDetails {
     @Id
+    @Column(name = "code")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID code;
+
     @Column(name = "email")
     private String email;
 
