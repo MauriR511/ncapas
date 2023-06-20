@@ -11,7 +11,4 @@ import java.util.UUID;
 public interface SongxPlaylistRepository
     extends ListCrudRepository<SongxPlaylist, UUID> {
 
-    List<Song> findSongByPlaylist(String title);
-    List<Playlist> findPlaylistBySong(String title);
-
 }

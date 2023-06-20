@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/")
 public class UserController {
 
     @Autowired
@@ -27,7 +27,7 @@ public class UserController {
     @Autowired
     private RequestErrorHandler errorHandler;
 
-    @PostMapping("/register")
+    @PostMapping("auth/signup")
     public ResponseEntity<?> register(@ModelAttribute @Valid SaveUserDTO user, BindingResult validations){
         if(validations.hasErrors()){
             return new ResponseEntity<>(
@@ -36,32 +36,30 @@ public class UserController {
             );
         }
 
-        try{
-            userService.save(user);
-            return new ResponseEntity<>(new MessageDTO("User registered"), HttpStatus.CREATED);
+        GetUserDTO getUser = userService.findOneByUsernameOrEmail(user.getUsername());
+        GetUserDTO getUserEmail = userService.findOneByUsernameOrEmail(user.getEmail());
+
+        if(getUser != null){
+            return new ResponseEntity<>(new MessageDTO("Username already exists"), HttpStatus.BAD_REQUEST);
         }
-        catch (Exception e){
-            e.printStackTrace();
-            return new ResponseEntity<>(new MessageDTO("Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+        else if(getUserEmail != null){
+            return new ResponseEntity<>(new MessageDTO("Email already exists"), HttpStatus.BAD_REQUEST);
+        }
+        else{
+            try{
+                userService.save(user);
+                return new ResponseEntity<>(new MessageDTO("User registered"), HttpStatus.CREATED);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                return new ResponseEntity<>(new MessageDTO("Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         }
     }
 
-    @GetMapping("/{value}")
-    public ResponseEntity<?> getByUsernameOrEmail(@PathVariable(name = "value") String value){
-        User user = userService.findOneByUsernameOrEmail(value);
 
-        GetUserDTO getUserDTO = new GetUserDTO(
-                user.getUsername(),
-                user.getEmail()
-        );
 
-        if (getUserDTO == null){
-            return new ResponseEntity<>(new MessageDTO("User not found"), HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(getUserDTO, HttpStatus.OK);
-    }
-
-    @GetMapping("/all")
+    @GetMapping("all")
     public ResponseEntity<?> getAll(){
         List<User> users = userService.findAll();
         return new ResponseEntity<>(users, HttpStatus.OK);

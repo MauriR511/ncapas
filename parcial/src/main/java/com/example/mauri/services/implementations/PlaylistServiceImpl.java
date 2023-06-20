@@ -1,5 +1,6 @@
 package com.example.mauri.services.implementations;
 
+import com.example.mauri.models.dtos.SavePlaylistDTO;
 import com.example.mauri.models.entities.Playlist;
 import com.example.mauri.models.entities.User;
 import com.example.mauri.repositories.PlaylistRepository;
@@ -20,7 +21,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public void save(Playlist playlist, User user) throws Exception {
+    public void save(SavePlaylistDTO playlist, User user) throws Exception {
         Playlist newPlaylist = new Playlist(
                 playlist.getTitle(),
                 playlist.getDescription(),

@@ -11,4 +11,5 @@ public interface SongRepository
     Song findOneByTitle(String title);
     void deleteSongByTitle(String title);
     List<Song> findAllByTitle(String title);
+    List<Song> findByTitleContaining(String title);
 }

@@ -1,5 +1,6 @@
 package com.example.mauri.services.implementations;
 
+import com.example.mauri.models.dtos.GetUserDTO;
 import com.example.mauri.models.dtos.SaveUserDTO;
 import com.example.mauri.models.entities.User;
 import com.example.mauri.repositories.UserRepository;
@@ -43,12 +44,39 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findOneByUsernameOrEmail(String value) {
+    public GetUserDTO findOneByUsernameOrEmail(String value) {
 
         try {
-            return userRepository.findOneByUsernameOrEmail(value, value);
+            User user = userRepository.findOneByUsernameOrEmail(value, value);
+
+            if (user != null) {
+                return new GetUserDTO(
+                        user.getUsername(),
+                        user.getEmail()
+                );
+            }
+            else {
+                return null;
+            }
         }
         catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public User findByUsernameOrEmail(String value) {
+        return userRepository.findOneByUsernameOrEmail(value, value);
+    }
+
+    @Override
+    public String findUUIDByUsernameOrEmail(String username) {
+        User user = userRepository.findOneByUsernameOrEmail(username, username);
+
+        if (user != null) {
+            return user.getCode().toString();
+        }
+        else {
             return null;
         }
     }

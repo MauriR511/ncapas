@@ -31,22 +31,12 @@ public class SongxPlaylistServiceImpl implements SongxPlaylistService {
 
     @Override
     public List<Song> findSongByPlaylist(String title) {
-        try {
-            return songxPlaylistRepository.findSongByPlaylist(title);
-        }
-        catch (Exception e) {
-            return null;
-        }
+        return null;
     }
 
     @Override
     public List<Playlist> findPlaylistBySong(String title) {
-        try {
-            return songxPlaylistRepository.findPlaylistBySong(title);
-        }
-        catch (Exception e) {
-            return null;
-        }
+        return null;
     }
 
     @Override
