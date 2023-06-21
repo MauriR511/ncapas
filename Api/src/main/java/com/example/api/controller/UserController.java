@@ -1,6 +1,8 @@
 package com.example.api.controller;
 
+import com.example.api.models.entities.Token;
 import com.example.api.models.entities.User;
+import com.example.api.models.entities.dtos.*;
 import com.example.api.services.UserService;
 import com.example.api.utils.RequestErrorHandler;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -12,6 +14,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -23,29 +26,65 @@ public class UserController {
     @Autowired
     private RequestErrorHandler errorHandler;
 
-    @GetMapping("test")
+    @GetMapping("auth/test")
     public Map<String, Object> currentUser(OAuth2AuthenticationToken authentication) {
         return authentication.getPrincipal().getAttributes();
     }
 
-    @PostMapping("user/register")
-    public ResponseEntity<?> register(@ModelAttribute @Valid User user, BindingResult validations){
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    @PostMapping("auth/signup")
+    public ResponseEntity<?> register(@ModelAttribute @Valid SaveUserDTO user, BindingResult validations){
+        if(validations.hasErrors()){
+            return new ResponseEntity<>(
+                    errorHandler.mapErrors(validations.getFieldErrors()),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        GetUserDTO getUser = userService.findByEmail(user.getEmail());
+
+        if(getUser != null){
+            return new ResponseEntity<>(new MessageDTO("Email already exists"), HttpStatus.BAD_REQUEST);
+        }
+        else{
+            try{
+                userService.save(user);
+                return new ResponseEntity<>(new MessageDTO("User registered"), HttpStatus.CREATED);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                return new ResponseEntity<>(new MessageDTO("Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
     }
 
-    @PostMapping("user/login")
-    public ResponseEntity<?> login(@ModelAttribute @Valid User user, BindingResult validations){
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PostMapping("auth/signin")
+    public ResponseEntity<?> login(@ModelAttribute @Valid UserLoginDTO info, BindingResult validations){
+        User user = userService.findOneByEmail(info.getEmail());
+
+        try {
+            Token token = userService.registerToken(user);
+            return new ResponseEntity<>(new TokenDTO(token), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    @GetMapping("user/{value}")
-    public ResponseEntity<?> getByEmail(@PathVariable(name = "value") String value){
-        return new ResponseEntity<>(HttpStatus.OK);
+    @GetMapping("auth/me")
+    public ResponseEntity<?> me(){
+        try {
+            User user = userService.findUserAuthenticated();
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("user/all")
     public ResponseEntity<?> getAll(){
-        return new ResponseEntity<>(HttpStatus.OK);
+        List<User> users = userService.findAll();
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @PatchMapping("user/{id}")
@@ -53,8 +92,15 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("user/{id}")
-    public ResponseEntity<?> delete(@PathVariable(name = "id") String id){
-        return new ResponseEntity<>(HttpStatus.OK);
+    @DeleteMapping("user/delete/{value}")
+    public ResponseEntity<?> deleteByUsernameOrEmail(@PathVariable(name = "value") String value){
+        try{
+            userService.deleteByEmail(value);
+            return new ResponseEntity<>(new MessageDTO("User deleted"), HttpStatus.OK);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>(new MessageDTO("Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

@@ -2,14 +2,17 @@ package com.example.api.services;
 
 import com.example.api.models.entities.Token;
 import com.example.api.models.entities.User;
+import com.example.api.models.entities.dtos.GetUserDTO;
+import com.example.api.models.entities.dtos.SaveUserDTO;
 
 import java.util.List;
 
 public interface UserService {
-    void save(User user) throws Exception;
+    void save(SaveUserDTO user) throws Exception;
     void deleteByEmail(String value) throws Exception;
     void deleteById(String id) throws Exception;
-    User findByEmail(String value);
+    GetUserDTO findByEmail(String value);
+    User findOneByEmail(String email);
     List<User> findAll();
     void updatePassword(String password, String id);
     void updateEmail(String email);

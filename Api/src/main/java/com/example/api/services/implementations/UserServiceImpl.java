@@ -2,6 +2,8 @@ package com.example.api.services.implementations;
 
 import com.example.api.models.entities.Token;
 import com.example.api.models.entities.User;
+import com.example.api.models.entities.dtos.GetUserDTO;
+import com.example.api.models.entities.dtos.SaveUserDTO;
 import com.example.api.repositories.TokenRepository;
 import com.example.api.repositories.UserRepository;
 import com.example.api.services.UserService;
@@ -31,7 +33,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public void save(User user) throws Exception {
+    public void save(SaveUserDTO user) throws Exception {
         User newUser = new User(
                 user.getEmail(),
                 user.getName(),
@@ -56,8 +58,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByEmail(String value) {
-        return userRepository.findOneByEmail(value);
+    public GetUserDTO findByEmail(String value) {
+        User user = userRepository.findOneByEmail(value);
+
+        if (user != null) {
+            return new GetUserDTO(
+                    user.getName(),
+                    user.getEmail()
+            );
+        }
+
+        return null;
+    }
+
+    @Override
+    public User findOneByEmail(String email) {
+        return userRepository.findOneByEmail(email);
     }
 
     @Override
