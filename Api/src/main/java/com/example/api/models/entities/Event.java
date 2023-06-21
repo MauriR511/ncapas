@@ -35,20 +35,16 @@ public class Event {
     @Column(name = "date")
     private Timestamp date;
 
-    @Column(name = "hour")
-    private String hour;
-
     @Column(name = "duration")
     private String duration;
 
-    public Event(Organizer organizer, Sponsor sponsor, Site site, String title, Timestamp date, String hour, String duration) {
+    public Event(Organizer organizer, Sponsor sponsor, Site site, String title, Timestamp date, String duration) {
         super();
         this.organizer = organizer;
         this.sponsor = sponsor;
         this.site = site;
         this.title = title;
         this.date = date;
-        this.hour = hour;
         this.duration = duration;
     }
 }

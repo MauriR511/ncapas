@@ -28,9 +28,9 @@ public class Tier {
     private int capacity;
 
     @Column(name = "price")
-    private double price;
+    private float price;
 
-    public Tier(Event event, String name, int capacity, double price) {
+    public Tier(Event event, String name, int capacity, float price) {
         super();
         this.event = event;
         this.name = name;

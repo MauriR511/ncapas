@@ -9,7 +9,7 @@ public interface UserService {
     void save(User user) throws Exception;
     void deleteByEmail(String value) throws Exception;
     void deleteById(String id) throws Exception;
-    User findOneByEmail(String value);
+    User findByEmail(String value);
     List<User> findAll();
     void updatePassword(String password, String id);
     void updateEmail(String email);

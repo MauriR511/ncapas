@@ -4,15 +4,17 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @NoArgsConstructor
 @Entity
 @Table(name = "category")
 public class Category {
     @Id
-    @Column(name = "id")
+    @Column(name = "code")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private UUID code;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "event_code")

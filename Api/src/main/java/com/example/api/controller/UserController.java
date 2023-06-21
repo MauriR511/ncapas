@@ -3,6 +3,7 @@ package com.example.api.controller;
 import com.example.api.models.entities.User;
 import com.example.api.services.UserService;
 import com.example.api.utils.RequestErrorHandler;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ public class UserController {
     @Autowired
     private RequestErrorHandler errorHandler;
 
-    @GetMapping("/test")
+    @GetMapping("test")
     public Map<String, Object> currentUser(OAuth2AuthenticationToken authentication) {
         return authentication.getPrincipal().getAttributes();
     }

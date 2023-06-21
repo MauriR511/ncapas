@@ -1,6 +1,7 @@
 package com.example.api.services.implementations;
 
 import com.example.api.models.entities.UserxEvent;
+import com.example.api.repositories.UserxEventRepository;
 import com.example.api.services.UserxEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,11 +12,10 @@ import java.util.List;
 public class UserxEventServiceImpl implements UserxEventService {
 
     @Autowired
-    private UserxEventService userxEventService;
+    private UserxEventRepository userxEventRepository;
 
     @Override
     public void save(UserxEvent userxEvent) throws Exception {
-
 
     }
 

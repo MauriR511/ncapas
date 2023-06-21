@@ -29,8 +29,8 @@ public class TicketController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/delete")
-    public ResponseEntity<?> deleteById(@ModelAttribute @Valid Ticket ticket, BindingResult validations){
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<?> deleteById(@ModelAttribute @Valid Ticket ticket, BindingResult validations, @PathVariable String id){
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

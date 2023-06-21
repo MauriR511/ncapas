@@ -4,15 +4,17 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @NoArgsConstructor
 @Entity
 @Table(name = "organizer")
 public class Organizer {
     @Id
-    @Column(name = "id")
+    @Column(name = "code")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private UUID code;
 
     @Column(name = "organizer")
     private String organizer;

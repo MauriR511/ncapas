@@ -1,6 +1,6 @@
 package com.example.api.controller;
 
-import com.example.api.models.entities.UserxRole;
+import com.example.api.models.entities.UserxEvent;
 import com.example.api.services.UserxEventService;
 import com.example.api.utils.RequestErrorHandler;
 import jakarta.validation.Valid;
@@ -20,7 +20,7 @@ public class UserxEventController {
     private RequestErrorHandler errorHandler;
 
     @PostMapping("/save")
-    public ResponseEntity<?> save(@ModelAttribute @Valid UserxRole userxRole, BindingResult validations){
+    public ResponseEntity<?> save(@ModelAttribute @Valid UserxEvent userxEvent, BindingResult validations){
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -40,7 +40,7 @@ public class UserxEventController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> patch(@PathVariable(name = "id") String id, @ModelAttribute @Valid UserxRole userxRole, BindingResult validations){
+    public ResponseEntity<?> patch(@PathVariable(name = "id") String id, @ModelAttribute @Valid UserxEvent userxEvent, BindingResult validations){
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

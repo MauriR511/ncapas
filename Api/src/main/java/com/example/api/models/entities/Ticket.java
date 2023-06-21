@@ -36,7 +36,7 @@ public class Ticket {
     @JoinColumn(name = "qr_code")
     private QR qr;
 
-    public Ticket(User user, Tier tier, Timestamp purchaseDate, Boolean isValid, String priority, QR qr) {
+    public Ticket(User user, Tier tier, Timestamp purchaseDate, Boolean isValid, QR qr) {
         super();
         this.user = user;
         this.tier = tier;

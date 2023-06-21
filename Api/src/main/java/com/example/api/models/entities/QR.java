@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -13,9 +14,9 @@ import java.sql.Timestamp;
 public class QR {
 
     @Id
-    @Column(name = "QR_id")
+    @Column(name = "qr_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String QR_id;
+    private UUID QR_id;
 
     @Column(name = "creation_date")
     private Timestamp creationDate;
