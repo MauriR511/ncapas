@@ -11,8 +11,10 @@ public interface UserService {
     void save(SaveUserDTO user) throws Exception;
     void deleteByEmail(String value) throws Exception;
     void deleteById(String id) throws Exception;
-    GetUserDTO findByEmail(String value);
-    User findOneByEmail(String email);
+    GetUserDTO findOneByEmail(String value);
+    User findByEmail(String email);
+
+    User findByEmailAndPassword(String email, String password);
     List<User> findAll();
     void updatePassword(String password, String id);
     void updateEmail(String email);

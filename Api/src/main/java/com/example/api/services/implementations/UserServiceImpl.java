@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackOn = Exception.class)
     public void deleteByEmail(String value) throws Exception {
-        userRepository.deleteByEmail(value);
+        userRepository.deleteByUsername(value);
 
     }
 
@@ -58,13 +58,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public GetUserDTO findByEmail(String value) {
-        User user = userRepository.findOneByEmail(value);
+    public GetUserDTO findOneByEmail(String value) {
+        User user = userRepository.findOneByUsername(value);
 
         if (user != null) {
             return new GetUserDTO(
                     user.getName(),
-                    user.getEmail()
+                    user.getUsername()
             );
         }
 
@@ -72,8 +72,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findOneByEmail(String email) {
-        return userRepository.findOneByEmail(email);
+    public User findByEmail(String email) {
+        return userRepository.findOneByUsername(email);
+    }
+
+    @Override
+    public User findByEmailAndPassword(String email, String password) {
+        String encodedPassword = passwordEncoder.encode(password);
+
+        System.out.println("La contraseña encriptada es la siguiente" + encodedPassword);
+        return userRepository.findByUsernameAndPassword(email, encodedPassword);
     }
 
     @Override
@@ -83,7 +91,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updatePassword(String password, String email) {
-        User user =  userRepository.findOneByEmail(email);
+        User user =  userRepository.findOneByUsername(email);
 
         if (user != null) {
             user.setPassword(password);
@@ -98,7 +106,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void activateUser(String email) {
-        User user =  userRepository.findOneByEmail(email);
+        User user =  userRepository.findOneByUsername(email);
 
         if (user != null) {
             if(!user.getActive()){
@@ -163,6 +171,6 @@ public class UserServiceImpl implements UserService {
                 .getAuthentication()
                 .getName();
 
-        return userRepository.findOneByEmail(username);
+        return userRepository.findOneByUsername(username);
     }
 }

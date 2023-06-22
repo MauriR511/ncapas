@@ -16,7 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @ToString(exclude = {"tokens"})
-@Table(name = "user")
+@Table(name = "User")
 public class User implements UserDetails {
     @Id
     @Column(name = "code")
@@ -24,36 +24,32 @@ public class User implements UserDetails {
     private UUID code;
 
     @Column(name = "email")
-    private String email;
+    private String username;
 
     @Column(name = "name")
     private String name;
 
+    @JsonIgnore
+    @Column (name = "password")
+    private String password;
+
     @Column(name = "active", insertable = false)
     private Boolean active;
-
-    @JsonIgnore
-    @Column(name = "password")
-    private String password;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Token> tokens;
 
-    public User(String email, String name, String password) {
+    public User(String username, String name, String password) {
         super();
-        this.email = email;
+        this.username = username;
         this.name = name;
         this.password = password;
+
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
-
-    @Override
-    public String getUsername() {
         return null;
     }
 

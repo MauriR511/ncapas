@@ -10,6 +10,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -70,7 +72,7 @@ public class WebSecurityConfiguration {
 
         managerBuilder
                 .userDetailsService(identifier -> {
-                    User user = userService.findOneByEmail(identifier);
+                    User user = userService.findByEmail(identifier);
 
                     if(user == null)
                         throw new UsernameNotFoundException("User: " + identifier + ", not found!");

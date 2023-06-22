@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,9 @@ public class UserController {
     @Autowired
     private RequestErrorHandler errorHandler;
 
+    @Autowired
+    public PasswordEncoder passwordEncoder;
+
     @GetMapping("auth/test")
     public Map<String, Object> currentUser(OAuth2AuthenticationToken authentication) {
         return authentication.getPrincipal().getAttributes();
@@ -40,7 +44,7 @@ public class UserController {
             );
         }
 
-        GetUserDTO getUser = userService.findByEmail(user.getEmail());
+        GetUserDTO getUser = userService.findOneByEmail(user.getEmail());
 
         if(getUser != null){
             return new ResponseEntity<>(new MessageDTO("Email already exists"), HttpStatus.BAD_REQUEST);
@@ -59,15 +63,24 @@ public class UserController {
 
     @PostMapping("auth/signin")
     public ResponseEntity<?> login(@ModelAttribute @Valid UserLoginDTO info, BindingResult validations){
-        User user = userService.findOneByEmail(info.getEmail());
+        User user = userService.findByEmail(info.getUsername());
 
-        try {
-            Token token = userService.registerToken(user);
-            return new ResponseEntity<>(new TokenDTO(token), HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        if(user == null){
+            return new ResponseEntity<>(new MessageDTO("User not found"), HttpStatus.NOT_FOUND);
         }
+        else if(!passwordEncoder.matches(info.getPassword(), user.getPassword())){
+            return new ResponseEntity<>(new MessageDTO("Incorrect password"), HttpStatus.BAD_REQUEST);
+        }
+        else{
+            try {
+                Token token = userService.registerToken(user);
+                return new ResponseEntity<>(new TokenDTO(token), HttpStatus.OK);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
     }
 
     @GetMapping("auth/me")

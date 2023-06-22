@@ -8,7 +8,9 @@ import java.util.UUID;
 public interface UserRepository
     extends ListCrudRepository<User, UUID> {
 
-    void deleteByEmail(String email);
+    void deleteByUsername(String email);
 
-    User findOneByEmail(String email);
+    User findOneByUsername(String email);
+
+    User findByUsernameAndPassword(String email, String password);
 }
