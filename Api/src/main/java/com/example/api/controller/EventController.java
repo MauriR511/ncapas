@@ -1,7 +1,11 @@
 package com.example.api.controller;
 
+import com.example.api.models.entities.Event;
 import com.example.api.models.entities.User;
+import com.example.api.models.entities.dtos.MessageDTO;
+import com.example.api.models.entities.dtos.SaveEventDTO;
 import com.example.api.services.EventService;
+import com.example.api.services.UserService;
 import com.example.api.utils.RequestErrorHandler;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +23,33 @@ public class EventController {
     @Autowired
     private RequestErrorHandler errorHandler;
 
+    @Autowired
+    private UserService userService;
+
     @PostMapping("/create")
-    public ResponseEntity<?> register(@ModelAttribute @Valid User user, BindingResult validations){
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<?> create(@ModelAttribute @Valid SaveEventDTO event, BindingResult validations){
+        if(validations.hasErrors()){
+            return new ResponseEntity<>(
+                    errorHandler.mapErrors(validations.getFieldErrors()),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        Event getEvent = eventService.findByTitle(event.getTitle());
+
+        if(getEvent != null){
+            return new ResponseEntity<>(new MessageDTO("Event already exists"), HttpStatus.BAD_REQUEST);
+        }
+        else{
+            try{
+                eventService.save(event);
+                return new ResponseEntity<>(new MessageDTO("Event registered"), HttpStatus.CREATED);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                return new ResponseEntity<>(new MessageDTO("Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -31,12 +59,40 @@ public class EventController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable(name = "id") String id){
-        return new ResponseEntity<>(HttpStatus.OK);
+        User getUser = userService.findUserAuthenticated();
+
+        System.out.println(id);
+
+        if(getUser == null){
+            return new ResponseEntity<>(new MessageDTO("User doesnt exist"), HttpStatus.BAD_REQUEST);
+        }
+        else{
+            try{
+                return new ResponseEntity<>(eventService.findOneById(id), HttpStatus.OK);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                return new ResponseEntity<>(new MessageDTO("Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<?> getAll(){
-        return new ResponseEntity<>(HttpStatus.OK);
+    @GetMapping("/main/all")
+    public ResponseEntity<?> getMainAll(){
+        User getUser = userService.findUserAuthenticated();
+
+        if(getUser == null){
+            return new ResponseEntity<>(new MessageDTO("User doesnt exist"), HttpStatus.BAD_REQUEST);
+        }
+        else{
+            try{
+                return new ResponseEntity<>(eventService.getMainAll(), HttpStatus.OK);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                return new ResponseEntity<>(new MessageDTO("Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
     }
 
     @PatchMapping("/{id}")

@@ -1,6 +1,11 @@
 package com.example.api.controller;
 
+import com.example.api.models.entities.Event;
+import com.example.api.models.entities.Organizer;
 import com.example.api.models.entities.Tier;
+import com.example.api.models.entities.dtos.MessageDTO;
+import com.example.api.models.entities.dtos.SaveTierDTO;
+import com.example.api.services.EventService;
 import com.example.api.services.TierService;
 import com.example.api.utils.RequestErrorHandler;
 import jakarta.validation.Valid;
@@ -17,11 +22,37 @@ public class TierController {
     private TierService tierService;
 
     @Autowired
+    private EventService eventService;
+
+    @Autowired
     private RequestErrorHandler errorHandler;
 
     @PostMapping("/create")
-    public ResponseEntity<?> create(@ModelAttribute @Valid Tier tier, BindingResult validations){
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<?> create(@ModelAttribute @Valid SaveTierDTO tier, BindingResult validations){
+        if(validations.hasErrors()){
+            return new ResponseEntity<>(
+                    errorHandler.mapErrors(validations.getFieldErrors()),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        Event getEvent = eventService.findByTitle(tier.getNameEvent());
+
+        System.out.println(getEvent);
+
+        if(getEvent == null){
+            return new ResponseEntity<>(new MessageDTO("Event doesnt exist"), HttpStatus.BAD_REQUEST);
+        }
+        else{
+            try{
+                tierService.save(tier);
+                return new ResponseEntity<>(new MessageDTO("Tier created"), HttpStatus.CREATED);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                return new ResponseEntity<>(new MessageDTO("Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
     }
 
     @DeleteMapping("/{id}")

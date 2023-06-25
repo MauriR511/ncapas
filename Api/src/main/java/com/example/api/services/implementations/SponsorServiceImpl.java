@@ -1,15 +1,26 @@
 package com.example.api.services.implementations;
 
 import com.example.api.models.entities.Sponsor;
+import com.example.api.models.entities.dtos.SaveSponsorDTO;
+import com.example.api.repositories.SponsorRepository;
 import com.example.api.services.SponsorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class SponsorServiceImpl implements SponsorService {
+
+    @Autowired
+    private SponsorRepository sponsorRepository;
+
     @Override
-    public void save(Sponsor sponsor) throws Exception {
+    public void save(SaveSponsorDTO sponsor) throws Exception {
+        Sponsor newSponsor = new Sponsor(
+                sponsor.getSponsor()
+        );
+        sponsorRepository.save(newSponsor);
 
     }
 
@@ -21,6 +32,11 @@ public class SponsorServiceImpl implements SponsorService {
     @Override
     public Sponsor findOneById(String id) {
         return null;
+    }
+
+    @Override
+    public Sponsor findBySponsor(String sponsor) {
+        return sponsorRepository.findBySponsor(sponsor);
     }
 
     @Override

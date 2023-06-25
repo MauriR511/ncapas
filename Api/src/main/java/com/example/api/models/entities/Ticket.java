@@ -27,21 +27,15 @@ public class Ticket {
     private Tier tier;
 
     @Column(name = "purchase_date")
-    private Timestamp purchaseDate;
+        private Timestamp purchaseDate;
 
-    @Column(name = "valid")
+    @Column(name = "valid", insertable = false)
     private Boolean isValid;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "qr_code")
-    private QR qr;
-
-    public Ticket(User user, Tier tier, Timestamp purchaseDate, Boolean isValid, QR qr) {
+    public Ticket(User user, Tier tier, Timestamp purchaseDate) {
         super();
         this.user = user;
         this.tier = tier;
         this.purchaseDate = purchaseDate;
-        this.isValid = isValid;
-        this.qr = qr;
     }
 }

@@ -2,17 +2,34 @@ package com.example.api.services.implementations;
 
 import com.example.api.models.entities.QR;
 import com.example.api.models.entities.Ticket;
+import com.example.api.models.entities.User;
+import com.example.api.models.entities.dtos.GetTicketDTO;
+import com.example.api.models.entities.dtos.SaveTicketDTO;
+import com.example.api.repositories.TicketRepository;
 import com.example.api.services.TicketService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class TicketServiceImpl implements TicketService {
-    @Override
-    public void save(Ticket ticket) throws Exception {
 
+    @Autowired
+    private TicketRepository ticketRepository;
+
+    @Override
+    public void save(SaveTicketDTO ticket) throws Exception {
+
+        Ticket newTicket = new Ticket(
+                ticket.getUser(),
+                ticket.getTier(),
+                ticket.getPurchaseDate()
+        );
+
+        ticketRepository.save(newTicket);
     }
 
     @Override
@@ -31,8 +48,21 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<Ticket> findAll() {
-        return null;
+    public List<GetTicketDTO> findAll(User user) {
+
+        List<Ticket> tickets = ticketRepository.findAllByUser(user);
+
+        List<GetTicketDTO> ticketsDTO = new ArrayList<>();
+
+        for (Ticket ticket : tickets) {
+            ticketsDTO.add(new GetTicketDTO(
+                    ticket.getTier().getEvent().getTitle(),
+                    ticket.getTier().getName(),
+                    ticket.getTier().getEvent().getDate().toString()
+            ));
+        }
+
+        return ticketsDTO;
     }
 
     @Override

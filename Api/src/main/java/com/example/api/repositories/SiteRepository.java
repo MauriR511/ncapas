@@ -7,4 +7,5 @@ import java.util.UUID;
 
 public interface SiteRepository
     extends ListCrudRepository<Site, UUID> {
+    Site findByName(String name);
 }

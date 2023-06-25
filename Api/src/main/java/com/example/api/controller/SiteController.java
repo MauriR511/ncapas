@@ -1,6 +1,10 @@
 package com.example.api.controller;
 
+import com.example.api.models.entities.Site;
+import com.example.api.models.entities.Sponsor;
 import com.example.api.models.entities.User;
+import com.example.api.models.entities.dtos.MessageDTO;
+import com.example.api.models.entities.dtos.SaveSiteDTO;
 import com.example.api.services.SiteService;
 import com.example.api.utils.RequestErrorHandler;
 import jakarta.validation.Valid;
@@ -20,8 +24,29 @@ public class SiteController {
     private RequestErrorHandler errorHandler;
 
     @PostMapping("/save")
-    public ResponseEntity<?> save(@ModelAttribute @Valid User user, BindingResult validations){
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<?> save(@ModelAttribute @Valid SaveSiteDTO site, BindingResult validations){
+        if(validations.hasErrors()){
+            return new ResponseEntity<>(
+                    errorHandler.mapErrors(validations.getFieldErrors()),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        Site getSite = siteService.findByName(site.getName());
+
+        if(getSite != null){
+            return new ResponseEntity<>(new MessageDTO("Site already exists"), HttpStatus.BAD_REQUEST);
+        }
+        else{
+            try{
+                siteService.save(site);
+                return new ResponseEntity<>(new MessageDTO("Site registered"), HttpStatus.CREATED);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                return new ResponseEntity<>(new MessageDTO("Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
     }
 
     @GetMapping("/{id}")

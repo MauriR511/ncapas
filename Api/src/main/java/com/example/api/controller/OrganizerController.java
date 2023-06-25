@@ -1,6 +1,9 @@
 package com.example.api.controller;
 
+import com.example.api.models.entities.Organizer;
 import com.example.api.models.entities.User;
+import com.example.api.models.entities.dtos.MessageDTO;
+import com.example.api.models.entities.dtos.SaveOrganizerDTO;
 import com.example.api.services.OrganizerService;
 import com.example.api.utils.RequestErrorHandler;
 import jakarta.validation.Valid;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/organizer")
 public class OrganizerController {
+
     @Autowired
     private OrganizerService organizerService;
 
@@ -20,8 +24,29 @@ public class OrganizerController {
     private RequestErrorHandler errorHandler;
 
     @PostMapping("/save")
-    public ResponseEntity<?> register(@ModelAttribute @Valid User user, BindingResult validations){
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<?> create(@ModelAttribute @Valid SaveOrganizerDTO organizer, BindingResult validations){
+        if(validations.hasErrors()){
+            return new ResponseEntity<>(
+                    errorHandler.mapErrors(validations.getFieldErrors()),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        Organizer getOrganizer = organizerService.findByOrganizer(organizer.getOrganizer());
+
+        if(getOrganizer != null){
+            return new ResponseEntity<>(new MessageDTO("Event already exists"), HttpStatus.BAD_REQUEST);
+        }
+        else{
+            try{
+                organizerService.save(organizer);
+                return new ResponseEntity<>(new MessageDTO("Organizer registered"), HttpStatus.CREATED);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                return new ResponseEntity<>(new MessageDTO("Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
     }
 
     @GetMapping("/{value}")

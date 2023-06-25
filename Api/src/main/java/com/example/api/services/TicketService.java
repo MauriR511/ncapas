@@ -2,16 +2,19 @@ package com.example.api.services;
 
 import com.example.api.models.entities.QR;
 import com.example.api.models.entities.Ticket;
+import com.example.api.models.entities.User;
+import com.example.api.models.entities.dtos.GetTicketDTO;
+import com.example.api.models.entities.dtos.SaveTicketDTO;
 
 import java.security.Timestamp;
 import java.util.List;
 
 public interface TicketService {
-    void save(Ticket ticket) throws Exception;
+    void save(SaveTicketDTO ticket) throws Exception;
     void deleteByTicketNumber(int value) throws Exception;
     void deleteById(String id) throws Exception;
     Ticket findOneByTicketNumber(int value);
-    List<Ticket> findAll();
+    List<GetTicketDTO> findAll(User user);
     void updateTicketNumber(int ticket_number, String id);
     void updatePurchaseDate(Timestamp purchaseDate, String id);
     void updateIsValid(Boolean isValid, String id);

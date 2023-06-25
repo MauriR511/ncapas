@@ -1,16 +1,27 @@
 package com.example.api.services.implementations;
 
 import com.example.api.models.entities.Organizer;
+import com.example.api.models.entities.dtos.SaveOrganizerDTO;
+import com.example.api.repositories.OrganizerRepository;
 import com.example.api.services.OrganizerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class OrganizerServiceImpl implements OrganizerService {
-    @Override
-    public void save(Organizer organizer) throws Exception {
 
+    @Autowired
+    private OrganizerRepository organizerRepository;
+
+    @Override
+    public void save(SaveOrganizerDTO organizer) throws Exception {
+        Organizer newOrganizer = new Organizer(
+                organizer.getOrganizer()
+        );
+
+        organizerRepository.save(newOrganizer);
     }
 
     @Override
@@ -21,6 +32,11 @@ public class OrganizerServiceImpl implements OrganizerService {
     @Override
     public Organizer findOneById(String id) {
         return null;
+    }
+
+    @Override
+    public Organizer findByOrganizer(String organizer) {
+        return organizerRepository.findByOrganizer(organizer);
     }
 
     @Override

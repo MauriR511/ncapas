@@ -7,4 +7,5 @@ import java.util.UUID;
 
 public interface SponsorRepository
     extends ListCrudRepository<Sponsor, UUID> {
+    Sponsor findBySponsor(String sponsor);
 }

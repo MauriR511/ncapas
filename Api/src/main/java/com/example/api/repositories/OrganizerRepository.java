@@ -7,4 +7,6 @@ import java.util.UUID;
 
 public interface OrganizerRepository
     extends ListCrudRepository<Organizer, UUID> {
+
+    Organizer findByOrganizer(String organizer);
 }
